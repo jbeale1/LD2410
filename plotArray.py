@@ -1,20 +1,32 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+# ------------------------------
 
-fname = "20250406_165747_distLog.csv"
-fname = "20250406_170207_distLog.csv"
-fname = "20250406_170508_distLog.csv"
+import os
+import glob
+
+#     Finds the most recently modified .csv file in a directory.
+def get_most_recent_csv(directory):
+    csv_files = glob.glob(os.path.join(directory, "*.csv"))
+    if not csv_files:
+        return None
+    most_recent_csv = max(csv_files, key=os.path.getmtime)
+    return most_recent_csv
+# ----------------------------
+
 inDir = r"C:\Users\beale\Documents\Tiltmeter"
+# inFile = os.path.join(inDir, fname)
+inFile = get_most_recent_csv(inDir)
+fname = os.path.basename(inFile)
 
-inFile = os.path.join(inDir, fname)
-
-# array_data = np.random.rand(100, 100)
 adata = np.genfromtxt(inFile, delimiter=",", dtype=int).T
 
 
 # Display the array as a bitmap
-plt.imshow(adata[10:-3,:], cmap='gray', interpolation='nearest', aspect='auto')
-plt.colorbar()  # Add a colorbar to show the value mapping
-plt.title("Array as Bitmap")
+fig, ax = plt.subplots()
+im = ax.imshow(adata[10:-4,:], cmap='gray', interpolation='nearest', aspect='auto')
+ax.set_yticks(np.arange(0, 19, 1), minor=False)
+fig.colorbar(im)  # Add a colorbar to show the value mapping
+plt.title(fname)
 plt.show()
